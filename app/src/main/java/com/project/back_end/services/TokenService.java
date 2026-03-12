@@ -1,0 +1,29 @@
+package com.project.back_end.services;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Date;
+
+@Service
+public class TokenService {
+
+    @Value("${jwt.secret:mySecretKeymySecretKeymySecretKey12}")
+    private String secret;
+
+    public String generateToken(String email) {
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
+}
